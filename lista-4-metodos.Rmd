@@ -9,10 +9,9 @@ output: html_document
 O Banco de Dados **"US State Constitutions Dataset"**, criado por Julia Gervaise-Rubicam Clouse (CLOUSE, 2019), converte textos constitucionais (historicos e atuais) dos estados dos EUA para dados quantificáveis utilizando-se da categorização destes textos. O objetivo é analisar a evolução das ideias e prioridades políticas nos 50 estados do país, e analisar a mudança constitucional dos estados ao longo do tempo.
 
 # Analisando a Base
-
-
 O objetivo dessa análise é fazer uma exploração dos dados a partir de três variáveis: **Lesislative**, **Executive**, e **Judicial**. 
 Respectivamente, tratam do texto que descreve as funções, procedimentos, poderes e limitações da legislatura; do texto que descreve as funções, estrutura, poderes e limitações do Poder Executivo; e do texto que descreve as funções e poderes dos sistemas de tribunais estaduais e dos funcionários do Poder Judiciário (CLOUSE, 2019).
+
 # Criando um índice para entender a mudança de foco e predominância do texto constitucional ligado a cada uma das categorias
 - Legendas:
 IMP = ÍNDICE DE PROPOCIONALIDADE DOS PODERES
@@ -72,7 +71,7 @@ constituicoes_poderes %>%
 # Índices Legislativo, Executivo e Judiciário por ano constitucional e estado
 
 ## GRÁFICO 2 - Índice Legislativo por ano constitucional e estado
-```{r}
+```{r grafico 2, echo=TRUE, fig.height=12, fig.width=15}
 constituicoes_poderes %>%
   ggplot(aes(x = constitution_year,
              y = imp_l)) + #determinando os eixos x e y
@@ -81,11 +80,15 @@ constituicoes_poderes %>%
   facet_wrap(~ abbreviation) + #separando por estado
   theme_classic() + #deixando clean
   labs(title = "IMP do Legislativo por Ano Constitucional", #determinando os labels
-     y = "IMP_L", x="Constitution_Year")
+     y = "IMP_L", x="Constitution_Year") +
+     theme(axis.text.x = element_text(size = 8.5),
+        axis.text.y = element_text(size = 12),
+        axis.title.x = element_text(size = 20),
+        axis.title.y = element_text(size = 15))
 ```
 
 ## GRÁFICO 3 - Índice Executivo por ano constitucional e estado
-```{r}
+```{r grafico 3, echo=TRUE, fig.height=12, fig.width=15}
 constituicoes_poderes %>%
   ggplot(aes(x = constitution_year,
              y = imp_e)) + #determinando os eixos x e y
@@ -94,12 +97,16 @@ constituicoes_poderes %>%
   facet_wrap(~ abbreviation) + #separando por estado
   theme_classic() + #deixando clean
   labs(title = "IMP do Executivo por Ano Constitucional", #determinando os labels
-       y = "IMP_E", x="Constitution_Year")
+       y = "IMP_E", x="Constitution_Year") +
+     theme(axis.text.x = element_text(size = 8.5),
+        axis.text.y = element_text(size = 12),
+        axis.title.x = element_text(size = 20),
+        axis.title.y = element_text(size = 15))
 ```
 
 
 ## GRÁFICO 4 - Índice Judiciário por ano constitucional e estado
-```{r}
+```{r grafico 4, echo=TRUE, fig.height=12, fig.width=15}
 constituicoes_poderes %>%
   ggplot(aes(x = constitution_year,
              y = imp_j)) + #determinando os eixos x e y
@@ -108,12 +115,15 @@ constituicoes_poderes %>%
   facet_wrap(~ abbreviation) + #separando por estado
   theme_classic() + #deixando clean
   labs(title = "IMP do Judiciário por Ano Constitucional", #determinando os labels
-       y = "IMP_J", x="Constitution_Year")
+       y = "IMP_J", x="Constitution_Year") +
+     theme(axis.text.x = element_text(size = 8.5),
+        axis.text.y = element_text(size = 12),
+        axis.title.x = element_text(size = 20),
+        axis.title.y = element_text(size = 15))
 ```
 
 # GRÁFICO 5- Poderes por ano constitucional separado por estado
-
-```{r}
+```{r grafico 5, echo=TRUE, fig.height=12, fig.width=15}
 constituicoes_poderes %>%
   ggplot(aes(constitution_year, poderes)) + #selecionando os eixos ano da constituicao e da variavel de interesse (poderes)
   geom_line(color = "steelblue", size = 1) + #determinando a cor e tamanho da linha
@@ -121,6 +131,10 @@ constituicoes_poderes %>%
   labs(title = "Powers by Constitution Year", #determinando os labels
        y = "Powers", x="Constitution_Year") +
   facet_wrap(~ abbreviation) + #separando por estado
-  theme_classic() #deixando mais clean
+  theme_classic() +
+     theme(axis.text.x = element_text(size = 8.5),
+        axis.text.y = element_text(size = 12),
+        axis.title.x = element_text(size = 20),
+        axis.title.y = element_text(size = 15))
 ```
 
