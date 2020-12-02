@@ -1,0 +1,126 @@
+---
+title: "Lista 4 - Métodos Quantitativos - IPOL"
+author: "Amanda Lopes; Ana Vaz; Bárbara Maia; Isabel Eirado"
+date: "02/12/2020"
+output: html_document
+---
+
+# A Base de Dados: U.S. State Constitutions Dataset
+O Banco de Dados **"US State Constitutions Dataset"**, criado por Julia Gervaise-Rubicam Clouse (CLOUSE, 2019), converte textos constitucionais (historicos e atuais) dos estados dos EUA para dados quantificáveis utilizando-se da categorização destes textos. O objetivo é analisar a evolução das ideias e prioridades políticas nos 50 estados do país, e analisar a mudança constitucional dos estados ao longo do tempo.
+
+# Analisando a Base
+
+
+O objetivo dessa análise é fazer uma exploração dos dados a partir de três variáveis: **Lesislative**, **Executive**, e **Judicial**. 
+Respectivamente, tratam do texto que descreve as funções, procedimentos, poderes e limitações da legislatura; do texto que descreve as funções, estrutura, poderes e limitações do Poder Executivo; e do texto que descreve as funções e poderes dos sistemas de tribunais estaduais e dos funcionários do Poder Judiciário (CLOUSE, 2019).
+# Criando um índice para entender a mudança de foco e predominância do texto constitucional ligado a cada uma das categorias
+- Legendas:
+IMP = ÍNDICE DE PROPOCIONALIDADE DOS PODERES
+IMP_E = Índice de Proporcionalidade do Poder Executivo
+IMP_L = Índice de Proporcionalidade do Poder Legislativo
+IMP_J = Índice de Proporcionalidade do Poder Judiciário
+executive = quantidade de palavras destinada à categoria "Executive" em cada constituição
+powers = somatório das palavras destinadas aos três poderes - Executivo + Legislativo + Judiciário - em cada constituição
+
+# Sobre o índice
+O Objetivo deste índice é fornecer uma proporção dedicada a cada uma das vertentes dos poderes em relação ao total dedicado aos três. Deste modo, espera-se observar se existe proporcionalidade entre eles, ou seja, se há um equilíbrio, necessário ao mecanismo de Checks and Balances, ou se a presença de cada um dos poderes nas constituições foi se alterando ao longo do tempo de forma desigual.
+
+# Justificativa teórica para o índice
+A literatura (CLOUSE, 2019) aponta que as primeiras constituições estaduais estadunidenses tendiam a focar nos ramos Legislativo e Exectuivo, enquanto as atuais se concentram em outras, como a de Justiça (CLOUSE, 2019). Conforme texto da autora: 
+"In general, the constitutions have become less structural documents, establishing fundamental law, and are now vehicles for actively promoting legislative laws and policy initiatives" (CLOUSE, 2019, p. 44).
+
+# Instalando pacotes a serem utilizados para criação do índice
+
+```{r}
+library(tidyverse)
+library(readxl)
+library(magrittr)
+library(dplyr)
+library(ggplot2)
+library(knitr)
+```
+
+# Carregando as bases de dados: state_const (U.S. State Constitutions) e States and Abbreviations (abreviações dos estados norte-americanos)
+```{r}
+state_const <- read_excel("state_const.xlsx")
+States_and_Abbreviations <- read_xlsx("States and Abbreviations.xlsx")
+```
+
+# Criando o índice a partir de manipulando das bases
+```{r}
+constituicoes_poderes <- state_const %>% #criando um novo data frame com as manipulações
+  select(state, constitution_year,current_constitution, 
+         total_words, legislative, executive, judicial) %>% #selecionando as variáveis de interesse
+  left_join(States_and_Abbreviations, constituicoes_poderes, by = "state") %>% #criando uma nova coluna de abreviacoes a partir do data.frame States and Abbreviations
+   mutate (poderes = (legislative + executive + judicial), #criando uma nova coluna com os valores somados das categorias executivo, legislativo e judiciário
+          imp_l = (legislative/poderes), #criando o índice de proporcionalidade do legislativo em relação à soma dos poderes
+          imp_e = (executive/poderes), #criando o índice de proporcionalidade do executivo em relação à soma dos poderes
+          imp_j = (judicial/poderes)) #criando o índice de proporcionalidade do judiciário em relação à soma dos poderes
+
+```
+
+# Visualização dos dados
+## GRÁFICO 1 - Poderes por ano constitucional
+```{r}
+constituicoes_poderes %>%
+  ggplot(aes(x = constitution_year,
+             y = poderes)) + #determinando os eixos x e y
+  geom_point(aes(color = abbreviation)) + #determinando a cor por abreviacao/estado
+  theme_classic() #deixando clean
+```
+
+# Índices Legislativo, Executivo e Judiciário por ano constitucional e estado
+
+## GRÁFICO 2 - Índice Legislativo por ano constitucional e estado
+```{r}
+constituicoes_poderes %>%
+  ggplot(aes(x = constitution_year,
+             y = imp_l)) + #determinando os eixos x e y
+  geom_line(aes(color = "red")) + #determinando a cor por abreviacao/estado
+  geom_point(color = "red") +
+  facet_wrap(~ abbreviation) + #separando por estado
+  theme_classic() + #deixando clean
+  labs(title = "IMP do Legislativo por Ano Constitucional", #determinando os labels
+     y = "IMP_L", x="Constitution_Year")
+```
+
+## GRÁFICO 3 - Índice Executivo por ano constitucional e estado
+```{r}
+constituicoes_poderes %>%
+  ggplot(aes(x = constitution_year,
+             y = imp_e)) + #determinando os eixos x e y
+  geom_line(aes(color = "red")) + #determinando a cor por abreviacao/estado
+  geom_point(color = "red") +
+  facet_wrap(~ abbreviation) + #separando por estado
+  theme_classic() + #deixando clean
+  labs(title = "IMP do Executivo por Ano Constitucional", #determinando os labels
+       y = "IMP_E", x="Constitution_Year")
+```
+
+
+## GRÁFICO 4 - Índice Judiciário por ano constitucional e estado
+```{r}
+constituicoes_poderes %>%
+  ggplot(aes(x = constitution_year,
+             y = imp_j)) + #determinando os eixos x e y
+  geom_line(aes(color = "red")) + #determinando a cor por abreviacao/estado
+  geom_point(color = "red") +
+  facet_wrap(~ abbreviation) + #separando por estado
+  theme_classic() + #deixando clean
+  labs(title = "IMP do Judiciário por Ano Constitucional", #determinando os labels
+       y = "IMP_J", x="Constitution_Year")
+```
+
+# GRÁFICO 5- Poderes por ano constitucional separado por estado
+
+```{r}
+constituicoes_poderes %>%
+  ggplot(aes(constitution_year, poderes)) + #selecionando os eixos ano da constituicao e da variavel de interesse (poderes)
+  geom_line(color = "steelblue", size = 1) + #determinando a cor e tamanho da linha
+  geom_point(color = "steelblue") + #determinando a cor do ponto
+  labs(title = "Powers by Constitution Year", #determinando os labels
+       y = "Powers", x="Constitution_Year") +
+  facet_wrap(~ abbreviation) + #separando por estado
+  theme_classic() #deixando mais clean
+```
+
