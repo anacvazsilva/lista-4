@@ -1,4 +1,4 @@
-#Instalando pacotes
+#Carregando pacotes
 
 library(tidyverse)
 library(readxl)
@@ -6,8 +6,9 @@ library(magrittr)
 library(dplyr)
 library(ggplot2)
 library(knitr)
+library(psych)
 
-# CArregando as bases. state_const (base U.S. State Constitutions ) e a base States and Abbreviations para auxiliar a colocar as abreviações dos estados na base original.
+# Carregando as bases. state_const (base U.S. State Constitutions ) e a base States and Abbreviations para auxiliar a colocar as abreviações dos estados na base original.
 
 state_const <- read_excel("C:/Users/barba/Dropbox/Academicos/Doutorado/Disciplinas/Metodos/Trabalho Final - Fred/dados/state_const.xlsx")
 States_and_Abbreviations <- read_xlsx("C:/Users/barba/Dropbox/Academicos/Doutorado/Disciplinas/Metodos/Trabalho Final - Fred/States and Abbreviations.xlsx")
@@ -22,6 +23,12 @@ constituicoes_poderes <- state_const %>% #criando um novo data frame com as mani
           imp_l = (legislative/poderes), #criando o índice de proporcionalidade do legislativo em relação à soma dos poderes
           imp_e = (executive/poderes), #criando o índice de proporcionalidade do executivo em relação à soma dos poderes
           imp_j = (judicial/poderes)) #criando o índice de proporcionalidade do judiciário em relação à soma dos poderes
+
+#TESTE DE CONFIANÇA - Alpha de Cronbach
+
+tabela_para_alpha <- constituicoes_poderes %>% #criando um novo objeto para o cálculo do alpha
+  select(imp_l, imp_e, imp_j) %>% #selecionadno as variáveis com os valores do índice 
+  psych::alpha(tabela_para_alpha, check.keys = TRUE) #aplicando a função alpha de Cronbach, já definida pelo pacote psych 
 
 # GRÁFICO 1 - Poderes por ano constitucional
 
