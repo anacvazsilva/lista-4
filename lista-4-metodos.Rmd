@@ -3,6 +3,7 @@ title: "Lista 4 - Métodos Quantitativos - IPOL"
 author: "Amanda Lopes; Ana Vaz; Bárbara Maia; Isabel Eirado"
 date: "02/12/2020"
 output: html_document
+fontsize: 12pt
 ---
 
 # A Base de Dados: U.S. State Constitutions Dataset
